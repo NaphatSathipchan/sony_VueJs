@@ -8,6 +8,8 @@ import BTDisplayCam from "../components/BTDisplayCam.vue";
 import { ref } from "vue";
 import Dropdown from 'primevue/dropdown';
 import axios from 'axios';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
 export default {
   components: {
     BTTabbar,
@@ -16,13 +18,22 @@ export default {
     BTDisplayImage,
     BTButton,
     Dropdown,
-    BTDisplayCam
+    BTDisplayCam,
+    Dialog,
+    Button
     },
   computed: {
-        isDisabled() {
-            return this.uploadedImages.length === 0;
-        }
-    },
+  isDisabled() {
+    // Check if uploadedImages array is empty
+    const imagesAvailable = this.uploadedImages.length > 0;
+    // Check if selectedCity is defined and has both EmpName and EmpId
+    const empNameAvailable = this.selectedCity && this.selectedCity.EmpName;
+    const empIdAvailable = this.selectedCity && this.selectedCity.EmpId;
+
+    // Button is disabled if no images are uploaded OR either EmpName or EmpId is missing
+    return !imagesAvailable || !empNameAvailable || !empIdAvailable;
+  }
+},
 
   data() {
 
@@ -34,9 +45,13 @@ export default {
         { EmpName: 'Meen', EmpId: '0000003' },
     ]);
     const opC = false;
+    const refreshPage = () => {
+            location.reload(); // Reloads the current page
+        };
 
     return {
         disabled: true,
+        showDialog: false,
         
 
       data: [],
@@ -154,6 +169,7 @@ export default {
                 await axios.post('http://192.168.99.87:8000/upload_image/', formData);
             }
             console.log('All images uploaded successfully');
+            this.showDialog = true;
         } catch (error) {
             console.error('Error uploading images:', error);
         }
@@ -177,7 +193,7 @@ export default {
         <BTTabbar />
       </div>
       <!-- main container -->
-      <div class="w-full bg-white rounded-[14px] mx-[20px] my-[40px] flex-[0.9] p-[30px] shadow-md overflow-y-scroll">
+      <div class="w-full bg-white rounded-[14px] mx-[20px] my-[40px] flex-[0.9] p-[30px] shadow-md overflow-y-auto">
         <!-- section_1 -->
         <div class="flex flex-row justify-between items-center">
           <p class="text-[64px] font-Kanit text-[#1C1C1C]">AddEmp</p>
@@ -274,8 +290,18 @@ export default {
                     <div class="flex items-center justify-center p-[10px] rounded-[14px] bg-[#1C1C1C] mt-[10px] hover:p-[12px] cursor-pointer" 
                        @click="!isDisabled && uploadImages()"
                        :class="{ 'cursor-not-allowed opacity-50': isDisabled }">
-                       <p class="text-[14px] text-[#FFF]">Upload</p>
+                       <p class="text-[14px] text-[#FFF]">Upload</p>                     
                     </div>
+                    <Dialog :visible="showDialog" @hide="showDialog = false">
+                      <template #header>
+                        <h4>Success!</h4>
+                      </template>
+                        <p>Your upload was successful. Please press the "OK" button to continue.</p>
+                      <template #footer>
+                    <Button label="OK" class="p-button-text" @click="refreshPage" />
+                     </template>
+                     </Dialog>
+
 
                 </div>
             </div>
