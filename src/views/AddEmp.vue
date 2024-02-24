@@ -17,7 +17,13 @@ export default {
     BTButton,
     Dropdown,
     BTDisplayCam
-  },
+    },
+  computed: {
+        isDisabled() {
+            return this.uploadedImages.length === 0;
+        }
+    },
+
   data() {
 
     const selectedCity = ref();
@@ -266,10 +272,11 @@ export default {
                     </div>
                     <!-- upload_button -->
                     <div class="flex items-center justify-center p-[10px] rounded-[14px] bg-[#1C1C1C] mt-[10px] hover:p-[12px] cursor-pointer" 
-                        @click="!disabled && uploadImages()"
-                        :class="{ 'cursor-not-allowed opacity-50': disabled }">
-                        <p class="text-[14px] text-[#FFF]">Upload</p>
+                       @click="!isDisabled && uploadImages()"
+                       :class="{ 'cursor-not-allowed opacity-50': isDisabled }">
+                       <p class="text-[14px] text-[#FFF]">Upload</p>
                     </div>
+
                 </div>
             </div>
         </div>
