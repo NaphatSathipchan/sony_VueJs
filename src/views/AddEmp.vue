@@ -45,9 +45,7 @@ export default {
         { EmpName: 'Meen', EmpId: '0000003' },
     ]);
     const opC = false;
-    const refreshPage = () => {
-            location.reload(); // Reloads the current page
-        };
+    
 
     return {
         disabled: true,
@@ -81,7 +79,9 @@ export default {
     }, 1000);
   },
   methods: {
-    
+    refreshPage () {
+            location.reload(); // Reloads the current page
+        },
     async clickadd() {
         try {
             const canvas = document.createElement('canvas');
@@ -288,7 +288,7 @@ export default {
                     </div>
                     <!-- upload_button -->
                     <div class="flex items-center justify-center p-[10px] rounded-[14px] bg-[#1C1C1C] mt-[10px] hover:p-[12px] cursor-pointer" 
-                       @click="!isDisabled && uploadImages()"
+                       @click="!isDisabled && uploadImages() "
                        :class="{ 'cursor-not-allowed opacity-50': isDisabled }">
                        <p class="text-[14px] text-[#FFF]">Upload</p>                     
                     </div>

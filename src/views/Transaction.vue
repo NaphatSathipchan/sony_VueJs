@@ -27,21 +27,55 @@
           <!-- searchbar_container -->
           <div class="flex flex-row border-b-[1px] border-[#1C1C1C] items-center py-2">
             <!-- searchbar -->
-            <BTSearchBar />
+            <div class="relative flex items-center justify-center">
+          <input type="search" v-model="searchQuery" @input="filter"
+              class="text-[14px] rounded-[14px] h-[45px] pl-[40px] pr-[10px] w-[300px] border border-[#1C1C1C] focus:outline-none font-Kanit font-thin"
+              placeholder="ชื่อหรือรหัสพนักงาน" >
+              
+          <div class="absolute left-0 ml-3">
+              <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+          </div>
+          <!-- <p>{{ this.$store.state.data_transaction }}</p> -->
+      </div>
             <!-- dropdown_container -->
-            <BTDropdown />
+            <div class="flex flex-col items-start ml-[20px]" @click="toggleDropdown">
+        <!-- title -->
+        <!-- <p class="text-[12px] text-[#1C1C1C]">camera</p> -->
+        <!-- dropdown -->
+        <div class="relative cursor-pointer">
+          <div class="bg-[#1C1C1C] py-[8px] px-[10px] justify-between flex rounded-[10px] items-center">
+            <!-- text -->
+            <p class="text-[16px] text-[#FFF] mr-[50px]">{{ selectedOption || 'All' }}</p>
+            <!-- icon -->
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-4 h-4" style="fill: white">
+                <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+              </svg>
+            </div>
+          </div>
+          <!-- Dropdown menu -->
+          <ul v-if="isOpen" class="absolute top-full left-0 w-[100%] bg-white rounded-[10px] mt-1">
+            <li @click="selectOption('All')" class="py-[5px] px-[10px] cursor-pointer hover:bg-gray-200">All</li>
+            <li @click="selectOption(1)" class="py-[5px] px-[10px] cursor-pointer hover:bg-gray-200">Camera 1</li>
+            <li @click="selectOption(2)" class="py-[5px] px-[10px] cursor-pointer hover:bg-gray-200">Camera 2</li>
+          </ul>
+        </div>
+      </div>
           </div>
         </div>
         <!-- transactioncard section -->
-        <div class="flex flex-row flex-wrap">
+        <div class="flex flex-row flex-wrap" v-for="item in filteredEmployees" :key="1" >
           <BTTransactionCard
-            v-for="item in data"
-            :key="item.autoID"
-            :Name="item.Name"
-            :CameraNo="item.CameraNo"
-            :DateTime="item.DateTime"
-            :EmployeeID="item.EmployeeID"
-            :Image="item.Image"
+            :key="1"
+            :Name="'ลุงตู่'"
+            :CameraNo="1"
+            :DateTime="12/5/2024"
+            :EmployeeID="1111"
+            :Image="'https://scontent.fbkk5-6.fna.fbcdn.net/v/t39.30808-6/279386693_1887406214796892_6195755929341865402_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeE_dRPgWnHKQ6wNw2eJZdv2jeohphgrtgON6iGmGCu2A88u67eNtgO-7NsNOXNqUySfmy4_3BGhMMiuZsJd0Sq_&_nc_ohc=zCIqrd80TZwAX_LRkYH&_nc_ht=scontent.fbkk5-6.fna&oh=00_AfCfok5hqRhf_f7r2myUnZbqP9asIYklVoXzHKTx3JFsbA&oe=65F1C267'"
           />
         </div>
       </div>
@@ -54,7 +88,7 @@
   import BTMenuIcon from "../components/BTMenuIcon.vue";
   import BTSearchBar from "../components/BTSearchBar.vue";
   import BTDropdown from "../components/BTDropdown.vue";
-  import axios from 'axios';
+  import axios, { all } from 'axios';
   
   export default {
     components: {
@@ -66,6 +100,8 @@
     },
     data() {
       return {
+        isOpen: false,
+        selectedOption: 'All',
         data: [],
         CamIcon: `
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="22" viewBox="0 0 30 22" fill="none">
@@ -77,8 +113,11 @@
           <path fill-rule="evenodd" clip-rule="evenodd" d="M13.3333 6.66669V18.3334H3.33333V6.66669H13.3333ZM10 10H6.66666V15H10V10ZM36.6667 21.6667V33.3334H26.6667V21.6667H36.6667ZM33.3333 25H30V30H33.3333V25ZM36.6667 6.66669V18.3334H16.6667V6.66669H36.6667ZM33.3333 10H20V15H33.3333V10ZM23.3333 21.6667V33.3334H3.33333V21.6667H23.3333ZM20 25H6.66666V30H20V25Z" fill="black"/>
         </svg>
         `,
+        
         Date: new Date().toLocaleString().split(' ')[0],
-        Time: new Date().toLocaleString().split(' ')[1]
+        Time: new Date().toLocaleString().split(' ')[1],
+        
+        // filteredEmployees:[]
       };
     },
     created() {
@@ -90,16 +129,61 @@
       this.fetchData();
     },
     methods: {
+      toggleDropdown() {
+        this.isOpen = !this.isOpen;
+      },
+      selectOption(option) {
+        if (option === 'All') {
+          this.selectedOption = 'All';
+        } else {
+          this.selectedOption = Number(option); // Ensure numeric value for CameraNo comparison
+        }
+        this.isOpen = false;
+        // this.filter();
+      },
       async fetchData() {
         try {
           const response = await axios.get('http://43.239.251.75:8000/api/Transaction');
           this.data = response.data.reverse();
-          console.log("my data:", this.data);
+          this.filteredEmployees = [...this.data]; // Initialize filteredEmployees with fetched data
+          this.$store.dispatch('appendTransaction', this.data);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
+      },
+       filter() {
+        // Convert search query to lowercase for case-insensitive comparison
+        const searchLower = this.searchQuery.toLowerCase().trim();
+
+        this.filteredEmployees = this.data.filter(employee => {
+          // Handle the 'All' case or ensure selectedOption is a number for comparison
+          const cameraMatch = this.selectedOption === 'All' || employee.CameraNo === Number(this.selectedOption);
+
+          // If there's a search query, also check if the name or employee ID includes it
+          const nameIncludesQuery = employee?.Name?.toLowerCase().includes(searchLower);
+          const idIncludesQuery = employee?.EmployeeID?.toString().toLowerCase().includes(searchLower);
+          return cameraMatch && (!searchLower || nameIncludesQuery || idIncludesQuery);
+        });
+      },
+    },
+    watch: {
+      searchQuery() {
+        this.filter();
       }
-    }
+    },
   };
   </script>
   
+  <style scoped>
+  .flex-row-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: relative;
+    width: 700px;
+    gap: 10px;
+    
+  }
+</style>

@@ -10,7 +10,7 @@
         <div class="ml-[8px] items-center text-left">
           <p class="text-[12px] mb-[4px]">รหัสพนักงาน: {{ EmployeeID }}</p>
           <p class="text-[12px] mb-[4px]">ชื่อ: {{ Name }}</p>
-          <p class="text-[12px]">วันที่ เวลา: {{ parseDateTime(DateTime) }}</p>
+          <p class="text-[12px]">วันที่ เวลา: {{ DateTime }}</p>
         </div>
       </div>
     </div>
@@ -30,11 +30,11 @@
         return `https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg`;
       }
     },
-    methods: {
-      parseDateTime(dateTime) {
-        return dateTime.split('T').join(' ');
-      }
-    }
+    // methods: {
+    //   parseDateTime(dateTime) {
+    //     return dateTime.split('T').join(' ');
+    //   }
+    // }
   }
   </script>
   
