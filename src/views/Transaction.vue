@@ -68,16 +68,19 @@
           </div>
         </div>
         <!-- transactioncard section -->
-        <div class="flex flex-row flex-wrap" v-for="item in filteredEmployees" :key="1" >
-          <BTTransactionCard
-            :key="1"
-            :Name="'ลุงตู่'"
-            :CameraNo="1"
-            :DateTime="12/5/2024"
-            :EmployeeID="1111"
-            :Image="'https://scontent.fbkk5-6.fna.fbcdn.net/v/t39.30808-6/279386693_1887406214796892_6195755929341865402_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeE_dRPgWnHKQ6wNw2eJZdv2jeohphgrtgON6iGmGCu2A88u67eNtgO-7NsNOXNqUySfmy4_3BGhMMiuZsJd0Sq_&_nc_ohc=zCIqrd80TZwAX_LRkYH&_nc_ht=scontent.fbkk5-6.fna&oh=00_AfCfok5hqRhf_f7r2myUnZbqP9asIYklVoXzHKTx3JFsbA&oe=65F1C267'"
-          />
+        <div class="flex flex-row flex-wrap">
+        <BTTransactionCard 
+          v-for="item in filteredEmployees" 
+          :key="item.autoID"
+          v-if="selectedOption === 'All' || item.CameraNo === selectedOption"
+          :Name="item.Name"
+          :CameraNo="item.CameraNo"
+          :DateTime="item.DateTime"
+          :EmployeeID="item.EmployeeID"
+          :Image="item.Image"
+        />
         </div>
+
       </div>
     </div>
   </template>
@@ -100,7 +103,9 @@
     },
     data() {
       return {
+        
         isOpen: false,
+        // searchQuery: '',
         selectedOption: 'All',
         data: [],
         CamIcon: `
@@ -113,7 +118,6 @@
           <path fill-rule="evenodd" clip-rule="evenodd" d="M13.3333 6.66669V18.3334H3.33333V6.66669H13.3333ZM10 10H6.66666V15H10V10ZM36.6667 21.6667V33.3334H26.6667V21.6667H36.6667ZM33.3333 25H30V30H33.3333V25ZM36.6667 6.66669V18.3334H16.6667V6.66669H36.6667ZM33.3333 10H20V15H33.3333V10ZM23.3333 21.6667V33.3334H3.33333V21.6667H23.3333ZM20 25H6.66666V30H20V25Z" fill="black"/>
         </svg>
         `,
-        
         Date: new Date().toLocaleString().split(' ')[0],
         Time: new Date().toLocaleString().split(' ')[1],
         

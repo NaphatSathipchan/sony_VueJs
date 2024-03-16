@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Transaction from '../views/Transaction.vue'
 import Camera from '../views/Camera.vue'
 import AddEmp from '../views/AddEmp.vue'
+import Login from '../views/Login.vue'
 
 const routes = [
   {
@@ -29,7 +30,12 @@ const routes = [
     path: '/AddEmp',
     name: 'AddEmp',
     component: AddEmp
-  }
+  },
+  {
+    path: '/Login',
+    name: 'Login',
+    component: Login
+  },
 ]
 
 const router = createRouter({
